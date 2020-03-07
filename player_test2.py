@@ -4,11 +4,12 @@ from congklak_view import CongklakView
 from congklak_player import CongklakPlayer
 import numpy as np
 import copy
+
 class CongklakPlayer5(CongklakPlayer):
 
     def __init__(self):
         super().__init__('Tim Blabalbalba')
-        self.blimit = 100
+        self.blimit = 200
         self.plyLimit = 4
         self.batasAtas = 20
 
@@ -18,15 +19,17 @@ class CongklakPlayer5(CongklakPlayer):
         self.faktor_tembak = 0
         self.faktor_mati = 0
 
-        self.w0 = 1   #tabungan
-        self.w02 = -0 #tabungan musuh
-        self.w1 = 0     #lanjut
+        self.w0_1 = 1   #tabungan
+        self.w0_2 = -0.4 #tabungan musuh
+        self.w0_3 = 0.8 #total biji di sisi player
+        self.w0_4 = -0.6 #biji di sisi musuh
+        self.w1 = 0.2     #lanjut
         self.w2 = -0     #ulang
-        self.w3 = 0   #tabung
-        self.w4 = 0    #tembak
+        self.w3 = 0.1   #tabung
+        self.w4 = 0.1    #tembak
         self.w5 = 0     #mati
 
-        self.inc = 40   #increment
+        self.inc = 10   #increment
 
 
     # Pemain beraksi
@@ -42,8 +45,10 @@ class CongklakPlayer5(CongklakPlayer):
 
     def evalFunc(self, frontier, no):
         eval = 0
-        eval = self.w0 * frontier.getTabungan(no)
-        eval += self.w02 * frontier.getTabungan(1-no)
+        eval = self.w0_1 * (frontier.getTabungan(no))
+        eval += self.w0_2 * (frontier.getTabungan(1-no))
+        eval += self.w0_3 * sum(frontier.getLubang(no))
+        eval += self.w0_4 * sum(frontier.getLubang(1-no))
         eval += self.w1 * self.faktor_lanjut
         eval += self.w2 * self.faktor_ulang
         eval += self.w3 * self.faktor_tabung
@@ -258,8 +263,8 @@ class CongklakPlayer5(CongklakPlayer):
                 # print(parent[0],parent[1])
                 evalScore[parent[0]][parent[1]].append(self.evalFunc(frontier[i][1],no))
 
-                print("FRONTIER", self.evalFunc(frontier[i][1],no))
-                CongklakView().tampilPapan(frontier[i][1])
+                # print("FRONTIER", self.evalFunc(frontier[i][1],no))
+                # CongklakView().tampilPapan(frontier[i][1])
 
         for i in range(plyLimits-1):
             i = plyLimits-2 -i #depth
@@ -283,13 +288,14 @@ class CongklakPlayer5(CongklakPlayer):
                                 evalScore[parent[0]][parent[1]].append(score[i][j][m])
 
         print('0', score[0][0])
-        for i in range(len(score[1])):
-            if len(score[1][i]) > 0:
-                # print(i, '1', score[1][i])
-                for j in range(len(score[1][i])):
-                    if score[0][0][0] == score[1][i][j]:
-                        if node[1][i][2] not in pilihan:
-                            pilihan.append(node[1][i][2])
+        if len(score[0][0])>0:
+            for i in range(len(score[1])):
+                if len(score[1][i]) > 0:
+                    # print(i, '1', score[1][i])
+                    for j in range(len(score[1][i])):
+                        if score[0][0][0] == score[1][i][j]:
+                            if node[1][i][2] not in pilihan:
+                                pilihan.append(node[1][i][2])
 
         # ambil dari 1 ply aja
         if len(pilihan) <1 :
@@ -298,7 +304,7 @@ class CongklakPlayer5(CongklakPlayer):
                 if testLubang[i]>0:
                     pilihan.append(i)
 
-        # print(pilihan)
+        print(pilihan)
         pilih = random.randint(0, len(pilihan)-1)
         print("pilih:", pilihan[pilih])
 
