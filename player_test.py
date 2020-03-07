@@ -24,6 +24,13 @@ class CongklakPlayer5(CongklakPlayer):
         self.faktor_tembak = 0
         self.faktor_mati = 0
 
+        self.w0 = 1   #tabungan
+        self.w1 = 0     #lanjut
+        self.w2 = 0     #ulang
+        self.w3 = 0.4     #tabung
+        self.w4 = 0     #tembak
+        self.w5 = 0     #mati
+
         self.inc = 10
 
     # Pemain beraksi
@@ -37,6 +44,18 @@ class CongklakPlayer5(CongklakPlayer):
         self.faktor_tembak = 0
         self.faktor_mati = 0
 
+    def evalFunc(self, frontier, no):
+        eval = 0
+        eval = self.w0 * frontier.getTabungan(no)
+        eval += self.w1 * self.faktor_lanjut
+        eval -= self.w2 * self.faktor_ulang
+        eval += self.w3 * self.faktor_tabung
+        eval += self.w4 * self.faktor_tembak
+        eval -= self.w5 * self.faktor_mati
+
+        self.resetFaktor()
+        return eval
+
     def nextStep(self, papan, langkah): #untuk mensimulasikan kalau lubang tsb dipilih
         if papan.bisaMain():
             status=papan.main(langkah)
@@ -45,13 +64,18 @@ class CongklakPlayer5(CongklakPlayer):
 
         while status == papan.S_LANJUT:
             status = papan.jalan()
+            self.faktor_lanjut += self.inc
         if status == papan.S_ULANG:
+            self.faktor_ulang += self.inc
             pass
         elif status == papan.S_TABUNG:
+            self.faktor_tabung += self.inc
             pass
         elif status == papan.S_TEMBAK:
+            self.faktor_tembak += self.inc
             pass
         elif status >= papan.S_MATI:
+            self.faktor_mati += self.inc
             pass
 
         try:
@@ -97,12 +121,6 @@ class CongklakPlayer5(CongklakPlayer):
             cabang.append((pilih, a))
 
         return cabang
-
-
-    def evalFunc(self, frontier, no):
-        eval = frontier.getTabungan(no)
-        self.resetFaktor()
-        return eval
 
     def cariMax(self, evalScore):
         score = []
