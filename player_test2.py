@@ -287,7 +287,7 @@ class CongklakPlayer5(CongklakPlayer):
                             if score[i][j][m] not in evalScore[parent[0]][parent[1]]:
                                 evalScore[parent[0]][parent[1]].append(score[i][j][m])
 
-        print('0', score[0][0])
+        print('==> min = ', score[0][0])
         if len(score[0][0])>0:
             for i in range(len(score[1])):
                 if len(score[1][i]) > 0:
@@ -295,20 +295,27 @@ class CongklakPlayer5(CongklakPlayer):
                     for j in range(len(score[1][i])):
                         if score[0][0][0] == score[1][i][j]:
                             if node[1][i][2] not in pilihan:
-                                pilihan.append(node[1][i][2])
+                                pilihan.append((node[1][i][1].getTabungan(self.nomor), node[1][i][2]))
+                                print("ALTERNATIF", node[1][i][2], score[node[1][i][0][0]][node[1][i][0][1]])
+                                CongklakView().tampilPapan(node[1][i][1])
 
         # ambil dari 1 ply aja
         if len(pilihan) <1 :
             testLubang = papan.getLubang(self.nomor)
             for i in range(len(testLubang)):
                 if testLubang[i]>0:
-                    pilihan.append(i)
+                    pilihan.append((papan.getTabungan(self.nomor),i))
 
+        
+        pilihan.sort(reverse=True)
         print(pilihan)
-        pilih = random.randint(0, len(pilihan)-1)
-        print("pilih:", pilihan[pilih])
 
-        return pilihan[pilih];
+        pilih = 0
+        # pilih = random.randint(0, len(pilihan)-1)
+
+        print("pilih:", pilihan[pilih][1])
+
+        return pilihan[pilih][1];
 
 # Class untuk mensimulasikan gerakan
 class CongklakModelSim:

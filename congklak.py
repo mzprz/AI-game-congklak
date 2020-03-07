@@ -47,11 +47,11 @@ def congklak(p1, p2, banyak):
             layar.tampilTabung(papan, pemain)
         elif status == papan.S_TEMBAK:
             layar.tampilTembak(papan, pemain)
-            # time.sleep(1.5)
+            time.sleep(1.5)
             papan.gantian()
         elif status >= papan.S_MATI:
             layar.tampilMati(papan, pemain)
-            # time.sleep(1.5)
+            time.sleep(1.5)
             papan.gantian()
         # periksa key, kalau ESCAPE berhenti
         # os.system('cls' if os.name == 'nt' else 'clear')
@@ -76,14 +76,14 @@ menang[m] += 1
 skor.append(s)
 
 # main 10 kali
-for i in range (12):
-    s,m = congklak(p1,p2, batas_banyak)
-    menang[m] += 1
-    skor.append(s)
-    s,m = congklak(p2,p1, batas_banyak)
-    menang[2-m] += 1
-    s.reverse()
-    skor.append(s)
+# for i in range (12):
+#     s,m = congklak(p1,p2, batas_banyak)
+#     menang[m] += 1
+#     skor.append(s)
+#     s,m = congklak(p2,p1, batas_banyak)
+#     menang[2-m] += 1
+#     s.reverse()
+#     skor.append(s)
 
 print(p1.nama, 'vs', p2.nama)
 print('Menang ', menang)
