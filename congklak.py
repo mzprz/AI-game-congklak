@@ -15,8 +15,9 @@ from congklak_player1 import CongklakPlayer1
 from congklak_player2 import CongklakPlayer2
 from congklak_player3 import CongklakPlayer3
 from congklak_player4 import CongklakPlayer4
-from player_test import CongklakPlayer5
-
+from player_test2 import CongklakPlayer5
+import time
+import os
 def congklak(p1, p2, banyak):
     p1.setNomor(0)
     p2.setNomor(1)
@@ -38,17 +39,22 @@ def congklak(p1, p2, banyak):
         while status == papan.S_LANJUT:
             status = papan.jalan()
             layar.tampilJalan(papan, pemain)
+            # os.system('cls' if os.name == 'nt' else 'clear')
+            # time.sleep(0.5)
         if status == papan.S_ULANG:
             layar.tampilUlang(papan, pemain)
         elif status == papan.S_TABUNG:
             layar.tampilTabung(papan, pemain)
         elif status == papan.S_TEMBAK:
             layar.tampilTembak(papan, pemain)
+            time.sleep(1.5)
             papan.gantian()
         elif status >= papan.S_MATI:
             layar.tampilMati(papan, pemain)
+            time.sleep(1.5)
             papan.gantian()
         # periksa key, kalau ESCAPE berhenti
+        # os.system('cls' if os.name == 'nt' else 'clear')
         if layar.keyEscape():
             break
     layar.tampilAkhir(papan, pemain)
@@ -57,7 +63,7 @@ def congklak(p1, p2, banyak):
 
 #p1=CongklakPlayer1()
 #p2=CongklakPlayer2()
-p1=CongklakPlayer4()
+p1=CongklakPlayer1()
 p2=CongklakPlayer5()
 
 menang=[0,0,0]
@@ -70,7 +76,7 @@ menang[m] += 1
 skor.append(s)
 
 # main 10 kali
-# for i in range (50):
+# for i in range (5):
 #     s,m = congklak(p1,p2, batas_banyak)
 #     menang[m] += 1
 #     skor.append(s)

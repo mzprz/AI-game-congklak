@@ -26,6 +26,7 @@ class CongklakModelSim:
     # tabungan ada di lubang ke-8 (index 7)
 
     __pemain=0
+    __lubang = [[4, 4, 4, 4, 4, 4, 4, 0],[4, 4, 4, 4, 4, 4, 4, 0]]
     __sisi=0
     __langkah=0
     __biji=0
@@ -34,6 +35,7 @@ class CongklakModelSim:
     def __init__(self, banyak):
         self.__lubang = [[4, 4, 4, 4, 4, 4, 4, 0],[4, 4, 4, 4, 4, 4, 4, 0]]
         self.MIN_BANYAK = banyak
+        self.__pemain = 0
 
     def setLubang(self, set):
         self.__lubang = set
