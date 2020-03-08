@@ -4,13 +4,14 @@ from congklak_view import CongklakView
 from congklak_player import CongklakPlayer
 import numpy as np
 import copy
+import time
 
 class CongklakPlayer5(CongklakPlayer):
 
     def __init__(self):
         # Tune-able Requirements
         super().__init__('Tim Blabalbalba')
-        self.blimit = 200
+        self.blimit = 200 #limit lebar anak tiap node
         self.plyLimit = 4
         self.batasAtas = 20
 
@@ -21,18 +22,19 @@ class CongklakPlayer5(CongklakPlayer):
         self.faktor_tembak = 0
         self.faktor_mati = 0
 
-        self.w0_1 = 1   #tabungan
-        self.w0_2 = -0.4 #tabungan musuh
-        self.w0_3 = 0.8 #total biji di sisi player
-        self.w0_4 = -0.6 #biji di sisi musuh
-        self.w1 = 0.2     #lanjut
-        self.w2 = -0     #ulang
-        self.w3 = 0.1   #tabung
-        self.w4 = 0.1    #tembak
-        self.w5 = 0     #mati
+        self.w0_1 = 1       #tabungan
+        self.w0_2 = -0.4    #tabungan musuh
+        self.w0_3 = 0.8     #total biji di sisi player
+        self.w0_4 = -0.6    #biji di sisi musuh
+        self.w1 = 0.2       #lanjut
+        self.w2 = -0        #ulang
+        self.w3 = 0.1       #tabung
+        self.w4 = 0.1       #tembak
+        self.w5 = 0         #mati
 
         self.inc = 10   #increment
 
+    # Terkait Evaluation Function ---------------------
     def resetFaktor(self):
         self.faktor_lanjut = 0
         self.faktor_ulang = 0
@@ -53,34 +55,22 @@ class CongklakPlayer5(CongklakPlayer):
         eval += self.w5 * self.faktor_mati
 
         self.resetFaktor()
-
         # print("eval", eval)
         return eval
 
-    def nextStep(self, papan, langkah, nomor): #untuk mensimulasikan kalau lubang tsb dipilih
-        # papan.__pemain = nomor
-
-        # print("NO", nomor)
-        # print("main", papan.__pemain)
-        # print("AWAL")
-        # CongklakView().tampilPapan(papan)
-
+    # Untuk mensimulasikan hasil ketika suatu langkah dipilih
+    # dari kondisi papan tertentu
+    # oleh pemain dg nomor tertentu ------------------------
+    def nextStep(self, papan, langkah, nomor):
         if papan.getPemain() != nomor:
             papan.gantian()
 
         if papan.bisaMain():
             status=papan.main(langkah)
-            # print("MAIN")
-            # CongklakView().tampilPapan(papan)
         else:
             status = papan.S_MATI
-            # print("MATI")
-
-        # print(status)
 
         while status == papan.S_LANJUT:
-            # print("JALAN")
-            # CongklakView().tampilPapan(papan)
             status = papan.jalan()
             self.faktor_lanjut += self.inc
         if status == papan.S_ULANG:
@@ -103,8 +93,11 @@ class CongklakPlayer5(CongklakPlayer):
             nextState[0].append(papan.getTabungan(0))
             nextState[1].append(papan.getTabungan(1))
             # print(nextState)
-        return nextState #kondisi lubang keseluruhan
+        return nextState #kondisi lubang akhir setelah satu langkah
 
+    # Untuk mendapatkan langkah yang bisa diambil
+    # oleh pemain dg nomor tertentu
+    # dari kondisi papan tertentu -------------------------
     def getNexts(self, papan, nomor):
         nexts = []
         lubang = papan.getLubang(nomor)
@@ -113,57 +106,23 @@ class CongklakPlayer5(CongklakPlayer):
             if lubang[i] > 0 :
                 nexts.append(i)
 
-        # random = np.random.random()
-
-        # if random > 0.5:
-
-        # # cari max
-        # max = 0.1
-        # for i in range(len(lubang)):
-        #     if (lubang[i] > max):
-        #         max = lubang[i]
-        #
-        # # tambahkan yang max
-        # for i in range(len(lubang)):
-        #     # if max>0:
-        #     if (lubang[i] >= max):
-        #         nexts.append(i)
-        #
-        # # cari min
-        # min = 9999
-        # for i in range(len(lubang)):
-        #     if (lubang[i] == 0):
-        #         continue
-        #     if (lubang[i] < min):
-        #         min = lubang[i]
-        #
-        # # tambahkan yang min
-        # for i in range(len(lubang)):
-        #     # if min>0:
-        #     if (lubang[i] == min):
-        #         nexts.append(i)
-
         return list(set(nexts));
 
-    def cariCabang(self, node1, nomor): #utuk cari cabang dari suatu node
+    # Untuk cari cabang dari suatu node
+    def cariCabang(self, node1, nomor):
         cabang = []
         nexts = self.getNexts(node1, nomor)
-        # print("next", len(nexts))
         for i in range(len(nexts)):
             node = copy.deepcopy(node1)
-            # print("init", node.getState())
             pilih = nexts[i]
-            # print("pilih", pilih)
             nextNode = self.nextStep(node, pilih, nomor)
-            # print("asd", nextNode)
-            # print(node.getState())
             a = CongklakModelSim(self.batasAtas)
             a.setLubang(nextNode)
 
             cabang.append((pilih, a))
-            # print(a.getState())
         return cabang
 
+    # Untuk cari value max
     def cariMax(self, evalScore):
         score = []
         max = 0
@@ -171,12 +130,12 @@ class CongklakPlayer5(CongklakPlayer):
             if (evalScore[i] > max):
                 max = evalScore[i]
 
-        # tambahkan yang minimal
         for i in range(len(evalScore)):
             if (evalScore[i] >= max):
                 score.append(evalScore[i])
         return score
 
+    # Untuk cari value min
     def cariMin(self, evalScore):
         score = []
         min = 9999
@@ -184,24 +143,24 @@ class CongklakPlayer5(CongklakPlayer):
             if (evalScore[i] < min):
                 min = evalScore[i]
 
-        # tambahkan yang minimal
         for i in range(len(evalScore)):
             if (evalScore[i] == min):
                 score.append(evalScore[i])
         return score
 
     def main(self, papan):
-        # print("NO", self.nomor)
         score = []
         pilihan = []
         evalScore = []
         node = []
         plyLimits = self.plyLimit
 
+        # Untuk mempersiapkan space
         for i in range(plyLimits):
             node.append([])
             score.append([])
             evalScore.append([])
+
         for i in range(plyLimits):
             for j in range(self.blimit):
                 score[i].append([])
@@ -217,11 +176,8 @@ class CongklakPlayer5(CongklakPlayer):
         papan2.setLubang(stateNol)
 
         node[0][0] = ((0,0), papan2, 0)
-        # print("LEN", node[0][0])
 
         # untuk mendapatkan seluruh node pada kedalaman selanjutnya
-
-        # while papan2.getLubang(self.nomor) != [0,0,0,0,0,0,0]:
         for i in range(plyLimits-1):
             if i%2 == 0: #max ?
                 no = self.nomor
@@ -230,39 +186,46 @@ class CongklakPlayer5(CongklakPlayer):
 
             for j in range(len(node[i])):
                 if j < self.blimit:
-                    # print(i,j, node[i][j])
                     cabang = self.cariCabang(node[i][j][1], no)
                     for k in range(len(cabang)):
                         parent = (i,j)
                         node[i+1].append((parent, cabang[k][1], cabang[k][0]))
-                        # print("Cabang", parent, cabang[k][0])
-                        # print("PAPAN: ", i+1, k, cabang[k][1])
-                        # CongklakView().tampilPapan(cabang[k][1])
-            # print("hola", len(node[i+1]))
+
+            # print(len(node[i+1]))
+            # time.sleep(1)
             if len(node[i+1]) == 0:
                 newLimit = i
                 plyLimits = newLimit+1
                 print("LIMIT CHANGED", plyLimits)
                 break
 
-
         # mencari skor pada node paling akhir
         frontier = node[plyLimits-1]
         # print(frontier)
         for i in range(len(frontier)):
             parent = [frontier[i][0][0], frontier[i][0][1]]
-            if parent[1] < self.blimit:
-                if plyLimits%2 == 0:
-                    no = self.nomor
-                else:
-                    no = 1 - self.nomor
+            # if parent[1] < self.blimit:
+            if plyLimits%2 == 0:
+                no = self.nomor
+            else:
+                no = 1 - self.nomor
 
-                # print(parent[0],parent[1])
+            # print(parent[0],parent[1])
+            try:
                 evalScore[parent[0]][parent[1]].append(self.evalFunc(frontier[i][1],no))
+            except:
+                if len(evalScore)-1 < parent[0]:
+                    while len(evalScore)-1 < parent[0]:
+                        evalScore.append[[]]
+                if len(evalScore[parent[0]])-1 < parent[1]:
+                    while len(evalScore[parent[0]])-1 < parent[1]:
+                        evalScore[parent[0]].append[[]]
 
+                evalScore[parent[0]][parent[1]].append(self.evalFunc(frontier[i][1],no))
                 # print("FRONTIER", self.evalFunc(frontier[i][1],no))
                 # CongklakView().tampilPapan(frontier[i][1])
 
+        # Minimax
         for i in range(plyLimits-1):
             i = plyLimits-2 -i #depth
             for j in range(len(node[i])): #lebar dari depth ini
@@ -284,7 +247,9 @@ class CongklakPlayer5(CongklakPlayer):
                             if score[i][j][m] not in evalScore[parent[0]][parent[1]]:
                                 evalScore[parent[0]][parent[1]].append(score[i][j][m])
 
-        print('==> min = ', score[0][0])
+        # Dapet nilai max di node [0][0]
+        # Lalu masukkan sebagai alternatif pilihan
+        print('==> max = ', score[0][0])
         if len(score[0][0])>0:
             for i in range(len(score[1])):
                 if len(score[1][i]) > 0:
@@ -296,6 +261,7 @@ class CongklakPlayer5(CongklakPlayer):
                                 print("ALTERNATIF", node[1][i][2], score[node[1][i][0][0]][node[1][i][0][1]])
                                 CongklakView().tampilPapan(node[1][i][1])
 
+        # in case tidak nemu pilihan
         # ambil dari 1 ply aja
         if len(pilihan) <1 :
             testLubang = papan.getLubang(self.nomor)
@@ -303,7 +269,7 @@ class CongklakPlayer5(CongklakPlayer):
                 if testLubang[i]>0:
                     pilihan.append((papan.getTabungan(self.nomor),i))
 
-
+        # Diurutkan berdasarkan yang memberi tabungan terbanyak pada langkah selanjutnya
         pilihan.sort(reverse=True)
         print(pilihan)
 
@@ -315,6 +281,7 @@ class CongklakPlayer5(CongklakPlayer):
         return pilihan[pilih][1];
 
 # Class untuk mensimulasikan gerakan
+# Tambahan fungis : GetState & SetState
 class CongklakModelSim:
     N_PEMAIN=2
     N_LUBANG=7
