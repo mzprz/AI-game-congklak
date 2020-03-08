@@ -16,6 +16,8 @@ from congklak_player2 import CongklakPlayer2
 from congklak_player3 import CongklakPlayer3
 from congklak_player4 import CongklakPlayer4
 from UTS import CongklakPlayer5
+from UTS2 import CongklakPlayer6
+from UTS3 import CongklakPlayer7
 import time
 import os
 def congklak(p1, p2, banyak):
@@ -63,8 +65,8 @@ def congklak(p1, p2, banyak):
 
 #p1=CongklakPlayer1()
 #p2=CongklakPlayer2()
-p1=CongklakPlayer5()
-p2=CongklakPlayer5()
+p1=CongklakPlayer6()
+p2=CongklakPlayer7()
 
 menang=[0,0,0]
 skor=[]
@@ -76,7 +78,7 @@ batas_banyak = random.randint(6, 9)
 #skor.append(s)
 
 # main 10 kali
-for i in range (250):
+for i in range (15):
     s,m = congklak(p1,p2, batas_banyak)
     menang[m] += 1
     skor.append(s)

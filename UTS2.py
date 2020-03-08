@@ -6,11 +6,11 @@ import numpy as np
 import copy
 import time
 
-class CongklakPlayer5(CongklakPlayer):
+class CongklakPlayer6(CongklakPlayer):
 
     def __init__(self):
         # Tune-able Requirements
-        super().__init__('Tim Blabalbalba')
+        super().__init__('Tim 2')
         self.blimit = 200 #limit lebar anak tiap node
         self.plyLimit = 4
         self.batasAtas = 20
@@ -26,13 +26,13 @@ class CongklakPlayer5(CongklakPlayer):
         self.w0_2 = -0    #tabungan musuh
         self.w0_3 = 0     #total biji di sisi player
         self.w0_4 = -0    #biji di sisi musuh
-        self.w1 = 0       #lanjut
-        self.w2 = -0        #ulang
+        self.w1 = 0     #lanjut
+        self.w2 = -1        #ulang
         self.w3 = 0       #tabung
-        self.w4 = 0       #tembak
-        self.w5 = 0         #mati
+        self.w4 = 1       #tembak
+        self.w5 = -1         #mati
 
-        self.inc = 10   #increment
+        self.inc = 100   #increment
 
     # Terkait Evaluation Function ---------------------
     def resetFaktor(self):
@@ -48,13 +48,16 @@ class CongklakPlayer5(CongklakPlayer):
         eval += self.w0_2 * (frontier.getTabungan(1-no))
         eval += self.w0_3 * sum(frontier.getLubang(no))
         eval += self.w0_4 * sum(frontier.getLubang(1-no))
-        eval += self.w1 * self.faktor_lanjut
-        eval += self.w2 * self.faktor_ulang
-        eval += self.w3 * self.faktor_tabung
-        eval += self.w4 * self.faktor_tembak
-        eval += self.w5 * self.faktor_mati
+        eval += self.w1 * frontier.getFaktor()[0]
+        eval += self.w2 * frontier.getFaktor()[1]
+        eval += self.w3 * frontier.getFaktor()[2]
+        eval += self.w4 * frontier.getFaktor()[3]
+        eval += self.w5 * frontier.getFaktor()[4]
 
-        self.resetFaktor()
+        # print(frontier.getFaktor())
+        # print(eval)
+        # time.sleep(1.5)
+        # self.resetFaktor()
         # print("eval", eval)
         return eval
 
@@ -119,21 +122,24 @@ class CongklakPlayer5(CongklakPlayer):
             a = CongklakModelSim(self.batasAtas)
             a.setLubang(nextNode)
 
+            a.setFaktor([self.faktor_lanjut, self.faktor_ulang, self.faktor_tabung, self.faktor_tembak, self.faktor_mati])
+            self.resetFaktor()
+
             cabang.append((pilih, a))
         return cabang
 
     # Untuk cari value max
     def cariMax(self, evalScore):
         score = []
-        max = 0
+        max = -999
         for i in range(len(evalScore)):
             if (evalScore[i] > max):
                 max = evalScore[i]
-
-        for i in range(len(evalScore)):
-            if (evalScore[i] >= max):
-                score.append(evalScore[i])
-        return score
+        #
+        # for i in range(len(evalScore)):
+        #     if (evalScore[i] >= max):
+        #         score.append(evalScore[i])
+        return max
 
     # Untuk cari value min
     def cariMin(self, evalScore):
@@ -143,10 +149,10 @@ class CongklakPlayer5(CongklakPlayer):
             if (evalScore[i] < min):
                 min = evalScore[i]
 
-        for i in range(len(evalScore)):
-            if (evalScore[i] == min):
-                score.append(evalScore[i])
-        return score
+        # for i in range(len(evalScore)):
+        #     if (evalScore[i] == min):
+        #         score.append(evalScore[i])
+        return min
 
     def main(self, papan):
         score = []
@@ -159,12 +165,12 @@ class CongklakPlayer5(CongklakPlayer):
         for i in range(plyLimits):
             node.append([])
             score.append([])
-            evalScore.append([])
+            # evalScore.append([])
 
         for i in range(plyLimits):
             for j in range(self.blimit):
                 score[i].append([])
-                evalScore[i].append([])
+                # evalScore[i].append([])
 
         node[0].append([])
 
@@ -190,7 +196,7 @@ class CongklakPlayer5(CongklakPlayer):
                     for k in range(len(cabang)):
                         parent = (i,j)
                         node[i+1].append((parent, cabang[k][1], cabang[k][0]))
-
+                        # print((parent, cabang[k][1], cabang[k][0]))
             # print(len(node[i+1]))
             # time.sleep(1)
             if len(node[i+1]) == 0:
@@ -216,50 +222,106 @@ class CongklakPlayer5(CongklakPlayer):
             except:
                 if len(evalScore)-1 < parent[0]:
                     while len(evalScore)-1 < parent[0]:
-                        evalScore.append[[]]
+                        evalScore.append([])
                 if len(evalScore[parent[0]])-1 < parent[1]:
                     while len(evalScore[parent[0]])-1 < parent[1]:
-                        evalScore[parent[0]].append[[]]
+                        evalScore[parent[0]].append([])
 
                 evalScore[parent[0]][parent[1]].append(self.evalFunc(frontier[i][1],no))
                 # print("FRONTIER", self.evalFunc(frontier[i][1],no))
                 # CongklakView().tampilPapan(frontier[i][1])
 
         # Minimax
-        for i in range(plyLimits-1):
-            i = plyLimits-2 -i #depth
-            for j in range(len(node[i])): #lebar dari depth ini
+        for i in reversed(range(plyLimits-1)): #dari node kedua dr ujung ke node 0
+            for j in range(len(node[i])): #lebar node ini
                 if j < self.blimit:
-                    if i%2 == 0: #max?
-                        score[i][j] = self.cariMax(evalScore[i][j])
-                        # print(i,j, score[i][j])
-                        #cari max --> mencari max pada parent yang sama
-                    else:
-                        score[i][j] = self.cariMin(evalScore[i][j])
+                    # print(evalScore)
+                    # print(i, j)
+                    try:
+                        if i % 2 == 0: #max
+                            score[i][j] = self.cariMax(evalScore[i][j])
+                        else:
+                            score[i][j] = self.cariMin(evalScore[i][j])
+                    except:
+                        pass
 
-                    # assign eval score untuk node di atasnya
-                    frontier = node[i]
-                    for k in range(len(frontier)):
-                        parent = [frontier[k][0][0], frontier[k][0][1]]
-                        # print(parent)
-                        for m in range(len(score[i][j])):
-                            # print(score[i][j][m])
-                            if score[i][j][m] not in evalScore[parent[0]][parent[1]]:
-                                evalScore[parent[0]][parent[1]].append(score[i][j][m])
+            for j in range(len(node[i])):
+                parent = [node[i][j][0][0], node[i][j][0][1]]
+                try:
+                    evalScore[parent[0]][parent[1]].append(score[i][j])
+                except:
+                    if len(evalScore)-1 < parent[0]:
+                        while len(evalScore)-1 < parent[0]:
+                            evalScore.append([])
+                    if len(evalScore[parent[0]])-1 < parent[1]:
+                        while len(evalScore[parent[0]])-1 < parent[1]:
+                            evalScore[parent[0]].append([])
+                    evalScore[parent[0]][parent[1]].append(score[i][j])
 
-        # Dapet nilai max di node [0][0]
-        # Lalu masukkan sebagai alternatif pilihan
-        print('==> max = ', score[0][0])
-        if len(score[0][0])>0:
+            # print(score)
+            # print("--------")
+            # time.sleep(1.5)
+
+
+
+        # for i in range(plyLimits-1):
+        #     i = plyLimits-2 -i #depth
+        #     for j in range(len(node[i])): #lebar dari depth ini
+        #         if j < self.blimit:
+        #             print(evalScore)
+        #             print(evalScore[i][j])
+        #             print("SCORE", score)
+        #             time.sleep(1)
+        #             if i%2 == 0: #max?
+        #                 score[i][j] = self.cariMax(evalScore[i][j])
+        #                 # print(i,j, score[i][j])
+        #                 #cari max --> mencari max pada parent yang sama
+        #             else:
+        #                 score[i][j] = self.cariMin(evalScore[i][j])
+        #
+        #             # assign eval score untuk node di atasnya
+        #             frontier = node[i]
+        #             # for k in range(len(frontier)):
+        #             parent = [frontier[j][0][0], frontier[j][0][1]]
+        #                 # print(parent)
+        #                 # for m in range(len(score[i][j])):
+        #                     # print(score[i][j][m])
+        #                     # if score[i][j][m] not in evalScore[parent[0]][parent[1]]:
+        #             try:self.cariMin(evalScore[i][j])
+        #                 # if score[i][j] not in evalScore[parent[0]][parent[1]]:
+        #                 evalScore[parent[0]][parent[1]].append(score[i][j])
+        #             except:
+        #                 if len(evalScore)-1 < parent[0]:
+        #                     while len(evalScore)-1 < parent[0]:
+        #                         evalScore.append([])
+        #                 if len(evalScore[parent[0]])-1 < parent[1]:
+        #                     while len(evalScore[parent[0]])-1 < parent[1]:
+        #                         evalScore[parent[0]].append([])
+        #                 # if score[i][j] not in evalScore[parent[0]][parent[1]]:
+        #                 evalScore[parent[0]][parent[1]].append(score[i][j])
+        #
+        # # Dapet nilai max di node [0][0]
+        # # Lalu masukkan sebagai alternatif pilihan
+        # print('==> max = ', score[0][0])
+        # # if sum(score[0]) > 0:
+        # for i in range(len(score[1])):
+        #     # if len(score[1][i]) > 0:
+        #         # print(i, '1', score[1][i])
+        #     for j in range(len(score[1][i])):
+        #         if score[0][0] == score[1][i][j]:
+        #             if node[1][i][2] not in pilihan:
+        #                 pilihan.append((node[1][i][1].getTabungan(self.nomor), node[1][i][2]))
+        #                 print("ALTERNATIF", node[1][i][2], score[node[1][i][0][0]][node[1][i][0][1]])
+        #                 CongklakView().tampilPapan(node[1][i][1])
+
+        if score[0][0] != []:
             for i in range(len(score[1])):
-                if len(score[1][i]) > 0:
-                    # print(i, '1', score[1][i])
-                    for j in range(len(score[1][i])):
-                        if score[0][0][0] == score[1][i][j]:
-                            if node[1][i][2] not in pilihan:
-                                pilihan.append((node[1][i][1].getTabungan(self.nomor), node[1][i][2]))
-                                print("ALTERNATIF", node[1][i][2], score[node[1][i][0][0]][node[1][i][0][1]])
-                                CongklakView().tampilPapan(node[1][i][1])
+                if score[1][i] != []:
+                    if score[1][i] == score[0][0]:
+                        if node[1][i][2] not in pilihan:
+                            pilihan.append((node[1][i][1].getTabungan(self.nomor), node[1][i][2]))
+                            print("ALTERNATIF", node[1][i][2], score[node[1][i][0][0]][node[1][i][0][1]])
+                            CongklakView().tampilPapan(node[1][i][1])
 
         # in case tidak nemu pilihan
         # ambil dari 1 ply aja
@@ -271,13 +333,16 @@ class CongklakPlayer5(CongklakPlayer):
 
         # Diurutkan berdasarkan yang memberi tabungan terbanyak pada langkah selanjutnya
         pilihan.sort(reverse=True)
-        print(pilihan)
+        print("OPSI:", pilihan)
 
         pilih = 0
         # pilih = random.randint(0, len(pilihan)-1)
 
+        # print(evalScore)
+        # print(score)
+
         print("pilih:", pilihan[pilih][1])
-        # time.sleep(1)
+        # time.sleep(1.5)
         return pilihan[pilih][1];
 
 # Class untuk mensimulasikan gerakan
@@ -317,6 +382,17 @@ class CongklakModelSim:
         self.__lubang = [[4, 4, 4, 4, 4, 4, 4, 0],[4, 4, 4, 4, 4, 4, 4, 0]]
         self.MIN_BANYAK = banyak
         self.__pemain = 0
+        self.faktor_lanjut = 0
+        self.faktor_ulang = 0
+        self.faktor_tabung = 0
+        self.faktor_tembak = 0
+        self.faktor_mati = 0
+
+    def getFaktor(self):
+        return  self.faktor_lanjut, self.faktor_ulang, self.faktor_tabung, self.faktor_tembak, self.faktor_mati
+
+    def setFaktor(self,set):
+        self.faktor_lanjut, self.faktor_ulang, self.faktor_tabung, self.faktor_tembak, self.faktor_mati = set
 
     def setLubang(self, set):
         self.__lubang = set
