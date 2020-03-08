@@ -23,13 +23,13 @@ class CongklakPlayer5(CongklakPlayer):
         self.faktor_mati = 0
 
         self.w0_1 = 1       #tabungan
-        self.w0_2 = -0.4    #tabungan musuh
-        self.w0_3 = 0.8     #total biji di sisi player
-        self.w0_4 = -0.6    #biji di sisi musuh
-        self.w1 = 0.2       #lanjut
+        self.w0_2 = -0    #tabungan musuh
+        self.w0_3 = 0     #total biji di sisi player
+        self.w0_4 = -0    #biji di sisi musuh
+        self.w1 = 0      #lanjut
         self.w2 = -0        #ulang
-        self.w3 = 0.1       #tabung
-        self.w4 = 0.1       #tembak
+        self.w3 = 0       #tabung
+        self.w4 = 0       #tembak
         self.w5 = 0         #mati
 
         self.inc = 10   #increment
