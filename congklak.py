@@ -65,8 +65,8 @@ def congklak(p1, p2, banyak):
 
 #p1=CongklakPlayer1()
 #p2=CongklakPlayer2()
-p1=CongklakPlayer6()
-p2=CongklakPlayer7()
+p1=CongklakPlayer7()
+p2=CongklakPlayer5()
 
 menang=[0,0,0]
 skor=[]
@@ -78,7 +78,7 @@ batas_banyak = random.randint(6, 9)
 #skor.append(s)
 
 # main 10 kali
-for i in range (15):
+for i in range (5):
     s,m = congklak(p1,p2, batas_banyak)
     menang[m] += 1
     skor.append(s)

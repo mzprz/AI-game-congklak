@@ -27,10 +27,10 @@ class CongklakPlayer6(CongklakPlayer):
         self.w0_3 = 0     #total biji di sisi player
         self.w0_4 = -0    #biji di sisi musuh
         self.w1 = 0     #lanjut
-        self.w2 = -1        #ulang
+        self.w2 = -0        #ulang
         self.w3 = 0       #tabung
-        self.w4 = 1       #tembak
-        self.w5 = -1         #mati
+        self.w4 = 0       #tembak
+        self.w5 = -0         #mati
 
         self.inc = 100   #increment
 
@@ -246,17 +246,18 @@ class CongklakPlayer6(CongklakPlayer):
                         pass
 
             for j in range(len(node[i])):
-                parent = [node[i][j][0][0], node[i][j][0][1]]
-                try:
-                    evalScore[parent[0]][parent[1]].append(score[i][j])
-                except:
-                    if len(evalScore)-1 < parent[0]:
-                        while len(evalScore)-1 < parent[0]:
-                            evalScore.append([])
-                    if len(evalScore[parent[0]])-1 < parent[1]:
-                        while len(evalScore[parent[0]])-1 < parent[1]:
-                            evalScore[parent[0]].append([])
-                    evalScore[parent[0]][parent[1]].append(score[i][j])
+                if j < self.blimit:
+                    parent = [node[i][j][0][0], node[i][j][0][1]]
+                    try:
+                        evalScore[parent[0]][parent[1]].append(score[i][j])
+                    except:
+                        if len(evalScore)-1 < parent[0]:
+                            while len(evalScore)-1 < parent[0]:
+                                evalScore.append([])
+                        if len(evalScore[parent[0]])-1 < parent[1]:
+                            while len(evalScore[parent[0]])-1 < parent[1]:
+                                evalScore[parent[0]].append([])
+                        evalScore[parent[0]][parent[1]].append(score[i][j])
 
             # print(score)
             # print("--------")

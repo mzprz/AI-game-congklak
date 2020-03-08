@@ -22,17 +22,17 @@ class CongklakPlayer7(CongklakPlayer):
         self.faktor_tembak = 0
         self.faktor_mati = 0
 
-        self.w0_1 = 1       #tabungan
-        self.w0_2 = -0.8    #tabungan musuh
-        self.w0_3 = 0     #total biji di sisi player
-        self.w0_4 = -1    #biji di sisi musuh
-        self.w1 = 0     #lanjut
-        self.w2 = -0        #ulang
-        self.w3 = 0       #tabung
-        self.w4 = 0.5       #tembak
-        self.w5 = -0         #mati
+        self.w0_1 = 0.9      #tabungan
+        self.w0_2 = -0.5    #tabungan musuh
+        self.w0_3 = 0.01    #total biji di sisi player
+        self.w0_4 = -0.01    #biji di sisi musuh
+        self.w1 = 0.001     #lanjut
+        self.w2 = -1        #ulang
+        self.w3 = 0.15       #tabung
+        self.w4 = 0.15       #tembak
+        self.w5 = -1         #mati
 
-        self.inc = 30   #increment
+        self.inc = 50   #increment
 
     # Terkait Evaluation Function ---------------------
     def resetFaktor(self):
@@ -246,17 +246,18 @@ class CongklakPlayer7(CongklakPlayer):
                         pass
 
             for j in range(len(node[i])):
-                parent = [node[i][j][0][0], node[i][j][0][1]]
-                try:
-                    evalScore[parent[0]][parent[1]].append(score[i][j])
-                except:
-                    if len(evalScore)-1 < parent[0]:
-                        while len(evalScore)-1 < parent[0]:
-                            evalScore.append([])
-                    if len(evalScore[parent[0]])-1 < parent[1]:
-                        while len(evalScore[parent[0]])-1 < parent[1]:
-                            evalScore[parent[0]].append([])
-                    evalScore[parent[0]][parent[1]].append(score[i][j])
+                if j < self.blimit:
+                    parent = [node[i][j][0][0], node[i][j][0][1]]
+                    try:
+                        evalScore[parent[0]][parent[1]].append(score[i][j])
+                    except:
+                        if len(evalScore)-1 < parent[0]:
+                            while len(evalScore)-1 < parent[0]:
+                                evalScore.append([])
+                        if len(evalScore[parent[0]])-1 < parent[1]:
+                            while len(evalScore[parent[0]])-1 < parent[1]:
+                                evalScore[parent[0]].append([])
+                        evalScore[parent[0]][parent[1]].append(score[i][j])
 
             # print(score)
             # print("--------")
