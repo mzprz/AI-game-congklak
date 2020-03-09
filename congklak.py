@@ -65,8 +65,8 @@ def congklak(p1, p2, banyak):
 
 #p1=CongklakPlayer1()
 #p2=CongklakPlayer2()
-p1=CongklakPlayer7()
-p2=CongklakPlayer5()
+p1=CongklakPlayer5()
+p2=CongklakPlayer7()
 
 menang=[0,0,0]
 skor=[]

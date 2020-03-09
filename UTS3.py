@@ -12,7 +12,7 @@ class CongklakPlayer7(CongklakPlayer):
         # Tune-able Requirements
         super().__init__('Tim 3')
         self.blimit = 200 #limit lebar anak tiap node
-        self.plyLimit = 4
+        self.plyLimit = 3
         self.batasAtas = 20
 
         # Utility Function Parameters
@@ -160,6 +160,10 @@ class CongklakPlayer7(CongklakPlayer):
         evalScore = []
         node = []
         plyLimits = self.plyLimit
+        if plyLimits%2 == 0:
+            testlim = 0
+        else:
+            testlim = 1
 
         # Untuk mempersiapkan space
         for i in range(plyLimits):
@@ -211,7 +215,7 @@ class CongklakPlayer7(CongklakPlayer):
         for i in range(len(frontier)):
             parent = [frontier[i][0][0], frontier[i][0][1]]
             # if parent[1] < self.blimit:
-            if plyLimits%2 == 0:
+            if plyLimits%2 == testlim:
                 no = self.nomor
             else:
                 no = 1 - self.nomor
@@ -238,10 +242,14 @@ class CongklakPlayer7(CongklakPlayer):
                     # print(evalScore)
                     # print(i, j)
                     try:
+                        print(i)
                         if i % 2 == 0: #max
+                            print("MAX")
                             score[i][j] = self.cariMax(evalScore[i][j])
                         else:
+                            print("Min")
                             score[i][j] = self.cariMin(evalScore[i][j])
+                        # time.sleep(1)
                     except:
                         pass
 
@@ -262,58 +270,6 @@ class CongklakPlayer7(CongklakPlayer):
             # print(score)
             # print("--------")
             # time.sleep(1.5)
-
-
-
-        # for i in range(plyLimits-1):
-        #     i = plyLimits-2 -i #depth
-        #     for j in range(len(node[i])): #lebar dari depth ini
-        #         if j < self.blimit:
-        #             print(evalScore)
-        #             print(evalScore[i][j])
-        #             print("SCORE", score)
-        #             time.sleep(1)
-        #             if i%2 == 0: #max?
-        #                 score[i][j] = self.cariMax(evalScore[i][j])
-        #                 # print(i,j, score[i][j])
-        #                 #cari max --> mencari max pada parent yang sama
-        #             else:
-        #                 score[i][j] = self.cariMin(evalScore[i][j])
-        #
-        #             # assign eval score untuk node di atasnya
-        #             frontier = node[i]
-        #             # for k in range(len(frontier)):
-        #             parent = [frontier[j][0][0], frontier[j][0][1]]
-        #                 # print(parent)
-        #                 # for m in range(len(score[i][j])):
-        #                     # print(score[i][j][m])
-        #                     # if score[i][j][m] not in evalScore[parent[0]][parent[1]]:
-        #             try:self.cariMin(evalScore[i][j])
-        #                 # if score[i][j] not in evalScore[parent[0]][parent[1]]:
-        #                 evalScore[parent[0]][parent[1]].append(score[i][j])
-        #             except:
-        #                 if len(evalScore)-1 < parent[0]:
-        #                     while len(evalScore)-1 < parent[0]:
-        #                         evalScore.append([])
-        #                 if len(evalScore[parent[0]])-1 < parent[1]:
-        #                     while len(evalScore[parent[0]])-1 < parent[1]:
-        #                         evalScore[parent[0]].append([])
-        #                 # if score[i][j] not in evalScore[parent[0]][parent[1]]:
-        #                 evalScore[parent[0]][parent[1]].append(score[i][j])
-        #
-        # # Dapet nilai max di node [0][0]
-        # # Lalu masukkan sebagai alternatif pilihan
-        # print('==> max = ', score[0][0])
-        # # if sum(score[0]) > 0:
-        # for i in range(len(score[1])):
-        #     # if len(score[1][i]) > 0:
-        #         # print(i, '1', score[1][i])
-        #     for j in range(len(score[1][i])):
-        #         if score[0][0] == score[1][i][j]:
-        #             if node[1][i][2] not in pilihan:
-        #                 pilihan.append((node[1][i][1].getTabungan(self.nomor), node[1][i][2]))
-        #                 print("ALTERNATIF", node[1][i][2], score[node[1][i][0][0]][node[1][i][0][1]])
-        #                 CongklakView().tampilPapan(node[1][i][1])
 
         if score[0][0] != []:
             # print(score)
