@@ -1,0 +1,2 @@
+Bikin laporan:
+- analisa kelebihan / kekurangan algoritma

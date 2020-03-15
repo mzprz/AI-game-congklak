@@ -2,15 +2,14 @@ import random
 # from congklak_model_sim import CongklakModelSim
 from congklak_view import CongklakView
 from congklak_player import CongklakPlayer
-import numpy as np
 import copy
 import time
 
-class CongklakPlayer7(CongklakPlayer):
+class CongklakPlayer03(CongklakPlayer):
 
     def __init__(self):
         # Tune-able Requirements
-        super().__init__('Tim 3')
+        super().__init__('TIGA')
         self.blimit = 200 #limit lebar anak tiap node
         self.plyLimit = 4
         self.batasAtas = 20

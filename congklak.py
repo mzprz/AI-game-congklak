@@ -18,6 +18,9 @@ from congklak_player4 import CongklakPlayer4
 from UTS import CongklakPlayer5
 from UTS2 import CongklakPlayer6
 from UTS3 import CongklakPlayer7
+
+from congklak_player03 import CongklakPlayer03
+
 import time
 import os
 def congklak(p1, p2, banyak):
@@ -65,8 +68,8 @@ def congklak(p1, p2, banyak):
 
 #p1=CongklakPlayer1()
 #p2=CongklakPlayer2()
-p1=CongklakPlayer5()
-p2=CongklakPlayer7()
+p1=CongklakPlayer6()
+p2=CongklakPlayer03()
 
 menang=[0,0,0]
 skor=[]
